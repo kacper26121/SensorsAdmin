@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Lumino - Dashboard</title>
+	<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/static/css/datepicker3.css" rel="stylesheet">
+	<link href="/static/css/styles.css" rel="stylesheet">
+	
+	<!--Custom Font-->
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+	<!--[if lt IE 9]>
+	<script src="js/html5shiv.js"></script>
+	<script src="js/respond.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+	<nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#sidebar-collapse"><span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span></button>
+				<a class="navbar-brand" href="#"><span>Sensors</span>Admin</a>
+			</div>
+		</div><!-- /.container-fluid -->
+	</nav>
+	<div id="sidebar-collapse" class="col-sm-3 col-lg-2 sidebar">
+		<div class="profile-sidebar">
+			<div class="profile-userpic">
+				<img src="http://placehold.it/50/30a5ff/fff" class="img-responsive" alt="">
+			</div>
+			<div class="profile-usertitle">
+				<div class="profile-usertitle-name">{{session['logged_in']}}</div>
+				<div class="profile-usertitle-status"><span class="indicator label-success"></span>Online</div>
+			</div>
+			<div class="clear"></div>
+		</div>
+		<ul class="nav menu">
+			<li class="active"><a href="/"><em class="fa fa-tachometer-alt">&nbsp;</em> Dashboard</a></li>
+			<li><a href="widgets.html"><em class="fa fa-calendar">&nbsp;</em> Widgets</a></li>
+			<li><a href="/charts"><em class="fa fa-chart-bar">&nbsp;</em> Charts</a></li>
+			<li><a href="elements.html"><em class="fa fa-toggle-off">&nbsp;</em> UI Elements</a></li>
+			{% if session['logged_in'] == "Admin"%}
+			<li><a href="panels.html"><em class="fa fa-clone">&nbsp;</em> Settings</a></li>
+			{% endif %}
+			<li class="parent "><a data-toggle="collapse" href="#sub-item-1">
+				<em class="fa fa-navicon">&nbsp;</em> Multilevel <span data-toggle="collapse" href="#sub-item-1" class="icon pull-right"><em class="fa fa-plus"></em></span>
+				</a>
+				<ul class="children collapse" id="sub-item-1">
+					<li><a class="" href="#">
+						<span class="fa fa-arrow-right">&nbsp;</span> Sub Item 1
+					</a></li>
+					<li><a class="" href="#">
+						<span class="fa fa-arrow-right">&nbsp;</span> Sub Item 2
+					</a></li>
+					<li><a class="" href="#">
+						<span class="fa fa-arrow-right">&nbsp;</span> Sub Item 3
+					</a></li>
+				</ul>
+			</li>
+			<li><a href="/logout"><em class="fa fa-power-off">&nbsp;</em> Logout</a></li>
+		</ul>
+	</div><!--/.sidebar-->
+		
+	<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
+		<div class="row">
+			<ol class="breadcrumb">
+				<li><a href="#">
+					<em class="fa fa-home"></em>
+				</a></li>
+				<li class="active">Dashboard</li>
+			</ol>
+		</div><!--/.row-->
+		
+		<div class="row">
+			<div class="col-lg-12">
+				<h1 class="page-header">Dashboard</h1>
+			</div>
+		</div><!--/.row-->
+		
+		<div class="row">
+			{% for sensor in list %}
+			<div class="col-xs-12 col-md-6 col-lg-3">
+				<div id="{{sensor[0]}}" class="panel panel-default sensor">
+					<div class="panel-body easypiechart-panel">
+						<h3>{{sensor[0]}}</h3>
+					</div>
+					<div style="margin-top:25px; margin-left:25px; padding-bottom:20px;">
+						<p style="font-size:18px;"><em class="fa fa-temperature-high">&nbsp;</em>Temperature: {{sensor[1]}}&degC</p>
+						<p style="font-size:18px;"><em class="fa fa-tint">&nbsp;</em>Humidity: {{sensor[2]}}%</p>
+						<p style="font-size:18px;"><em class="fa fa-cloud">&nbsp;</em>Pressure: {{sensor[3]}}hPa</p>
+					</div>
+					<form id="submit_{{sensor[0]}}" action="/charts" method="GET"> 
+						<input type="hidden" name="select" value="{{sensor[0]}}">
+					</form>
+				</div>
+			</div>
+			{%endfor%}
+		</div><!--/.row-->
+				
+	</div>	<!--/.main-->
+	
+	<script src="/static/js/jquery-1.11.1.min.js"></script>
+	<script src="/static/js/bootstrap.min.js"></script>
+	<script src="/static/js/chart.min.js"></script>
+	<script src="/static/js/chart-data.js"></script>
+	<script src="/static/js/easypiechart.js"></script>
+	<script src="/static/js/easypiechart-data.js"></script>
+	<script src="/static/js/bootstrap-datepicker.js"></script>
+	<script src="/static/js/custom.js"></script>
+	<script>
+	
+	$(document).on('click', 'div.sensor', function(e){
+		$(this).find('form').submit();
+	});
+	</script>
+		
+</body>
+</html>
