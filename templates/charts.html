@@ -7,7 +7,7 @@
 	<link href="/static/css/bootstrap.min.css" rel="stylesheet">
 	<link href="/static/css/bootstrap-datetimepicker.css" rel="stylesheet">
 	<link href="/static/css/styles.css" rel="stylesheet">
-	
+
 	<!--Custom Font-->
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 	<link href="https://fonts.googleapis.com/css?family=Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
@@ -63,7 +63,7 @@
 			<li><a href="/logout"><em class="fa fa-power-off">&nbsp;</em> Logout</a></li>
 		</ul>
 	</div><!--/.sidebar-->
-		
+
 	<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
 		<div class="row">
 			<ol class="breadcrumb">
@@ -73,15 +73,15 @@
 				<li class="active">Charts</li>
 			</ol>
 		</div><!--/.row-->
-		
+
 		<div class="row">
 			<div class="col-lg-12">
 				<h1 class="page-header">Charts</h1>
 			</div>
 		</div><!--/.row-->
-		
+
 		<div class="row">
-			<form id="datetime_range" action="/charts" method="GET"> 
+			<form id="datetime_range" action="/charts" method="GET">
 	        <!-- <div class="row">          -->
 	          <div class="col-lg-3">
 			  	<div class="form-group">
@@ -93,10 +93,10 @@
 	        <!-- <div class="row"> -->
 	          <div class="col-lg-3">
 			  	<div class="form-group">
-					<label for="to">To date</label>   
+					<label for="to">To date</label>
 					<input class="form-control" id="datetimepicker2" type="text" value="{{to_date}}" name="to">
 				</div>
-	          </div>   
+	          </div>
 	        <!-- </div>          -->
 			<div class="col-lg-2">
 				<div class="form-group">
@@ -110,16 +110,16 @@
 				</div>
 			</div>
 	        <!-- <div class="row"> -->
-	        <div class="col-lg-3">     
+	        <div class="col-lg-3">
 				<div class="form-group">
 					<button type="submit" class="btn btn-md btn-primary" style="margin-top: 25px">Submit</button>
 				</div>
 	        </div>
 	        <!-- </div> -->
-	      </form> 
+	      </form>
 		</div><!--/.row-->
-		
-		
+
+
 		{% for sensor in list %}
 		<div class="row">
 			<div class="col-lg-12">
@@ -133,20 +133,12 @@
 								<ul class="dropdown-menu dropdown-menu-right">
 									<li>
 										<ul class="dropdown-settings">
-											<li><a href="#">
-												<em class="fa fa-cog"></em> Temperature
+											<li id="get_csv" name="{{sensor}}"><a href="#">
+												<em class="fa fa-cog"></em> Save CSV
 											</a></li>
 											<li class="divider"></li>
-											<li><a href="#">
-												<em class="fa fa-cog"></em> Humidity
-											</a></li>
-											<li class="divider"></li>
-											<li><a href="#">
-												<em class="fa fa-cog"></em> Pressure
-											</a></li>
-											<li class="divider"></li>
-											<li><a href="#">
-												<em class="fa fa-cog"></em> All
+											<li id="get_json" name="{{sensor}}"><a href="#">
+												<em class="fa fa-cog"></em> Save JSON
 											</a></li>
 										</ul>
 									</li>
@@ -154,137 +146,163 @@
 							</li>
 						</ul>
 						<span class="pull-right clickable panel-toggle panel-button-tab-left"><em class="fa fa-angle-up"></em></span></div>
-					<div class="panel-body">
-						<div class="canvas-wrapper">
-							<canvas class="main-chart" id="{{sensor}}" height="200" width="600"></canvas>
+						<div class="panel-body">
+							<div class="canvas-wrapper">
+								<canvas class="main-chart" id="{{sensor}}" height="200" width="600"></canvas>
+							</div>
 						</div>
-					</div>
 				</div>
 			</div>
 		</div><!--/.row-->
 		{%endfor%}
 	</div>	<!--/.main-->
-	  
+
 
 	<script src="/static/js/jquery-1.11.1.min.js"></script>
 	<script src="/static/js/bootstrap.min.js"></script>
-	<script src="/static/js/chart-min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 	<script src="/static/js/chart-data.js"></script>
 	<script src="/static/js/easypiechart.js"></script>
 	<script src="/static/js/easypiechart-data.js"></script>
 	<script src="/static/js/custom.js"></script>
 	<script src="/static/js/bootstrap-datetimepicker.js"></script>
 	<script>
-	window.onload = function () {
-
-		$("#datetimepicker1").datetimepicker({
-			format: 'yyyy-mm-dd hh:ii:ss',
-			defaultDate: '{{from_date}}'
-		});
-		
-		$("#datetimepicker2").datetimepicker({
-			format: 'yyyy-mm-dd hh:ii:ss',
-			defaultDate: '{{to_date}}'
-		});
-    
-		{% for get_sensor in list %}
-		
-/*new Chart(document.getElementById("{{get_sensor}}"), {
-  type: 'line',
-  data: {
-    labels: [1500,1600,1700,1750,1800,1850,1900,1950,1999,2050],
-    datasets: [{ 
-		showLine: true,
-        data: [86,114,106,106,107,111,133,221,783,2478],
-        label: "Africa",
-        borderColor: "#3e95cd",
-        fill: false
-      }, { 
-        data: [282,350,411,502,635,809,947,1402,3700,5267],
-        label: "Asia",
-        borderColor: "#8e5ea2",
-        fill: false
-      }, { 
-        data: [168,170,178,190,203,276,408,547,675,734],
-        label: "Europe",
-        borderColor: "#3cba9f",
-        fill: false
-      }, { 
-        data: [40,20,10,16,24,38,74,167,508,784],
-        label: "Latin America",
-        borderColor: "#e8c3b9",
-        fill: false
-      }, { 
-        data: [6,3,2,2,7,26,82,172,312,433],
-        label: "North America",
-        borderColor: "#c45850",
-        fill: false
-      }
-    ]
-  },
-  options: {
-    title: {
-      display: true,
-      text: 'World population per region (in millions)'
+	function parseJSONToCSVStr(jsonData) {
+    if(jsonData.length == 0) {
+        return '';
     }
-  }
-});*/
-		var chart1 = document.getElementById("{{get_sensor}}").getContext("2d");
-		
-		window.myLine = new Chart(chart1).Line({
-			labels : [
-				{% for time in value[get_sensor] %}
-					"{{time[3]}}",
+
+    let keys = Object.keys(jsonData[0]);
+
+    let columnDelimiter = ',';
+    let lineDelimiter = '\n';
+
+    let csvColumnHeader = keys.join(columnDelimiter);
+    let csvStr = csvColumnHeader + lineDelimiter;
+
+    jsonData.forEach(item => {
+        keys.forEach((key, index) => {
+            if( (index > 0) && (index < keys.length) ) {
+                csvStr += columnDelimiter;
+            }
+            csvStr += item[key];
+        });
+        csvStr += lineDelimiter;
+    });
+
+    return encodeURIComponent(csvStr);;
+	}
+
+	function exportToCsvFile(jsonData, filename) {
+    let csvStr = parseJSONToCSVStr(jsonData);
+    let dataUri = 'data:text/csv;charset=utf-8,'+ csvStr;
+
+    let exportFileDefaultName = filename+'.csv';
+
+    let linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+	}
+
+	function exportToJsonFile(jsonData, filename) {
+	    let dataStr = JSON.stringify(jsonData,  null, 2);
+	    let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+
+	    let exportFileDefaultName = filename+'.json';
+
+	    let linkElement = document.createElement('a');
+	    linkElement.setAttribute('href', dataUri);
+	    linkElement.setAttribute('download', exportFileDefaultName);
+	    linkElement.click();
+	}
+
+	function GetValue(index) {
+		let obj = [];
+
+		{% for key, data in value.items() %}
+			if("{{key}}" === index) {
+				{% for get in data %}
+					obj.push({temperature : {{get[0]}},
+										humidity : {{get[1]}},
+										pressure : {{get[2]}},
+										datetime: "{{get[3]}}"});
 				{% endfor %}
-			],
-			datasets : [
-			{
-					label: "My First dataset",
-					fillColor : "rgba(220,220,220,0.2)",
-					strokeColor : "rgba(220,220,220,1)",
-					pointColor : "rgba(220,220,220,1)",
-					pointStrokeColor : "#fff",
-					pointHighlightFill : "#fff",
-					pointHighlightStroke : "rgba(220,220,220,1)",
-					data : [
-						{% for temp in value[get_sensor] %}
-							"{{temp[0]}}",
-						{% endfor %}
-					]
-			}, {
-					label: "My Second dataset",
-					fillColor : "rgba(48, 164, 255, 0.2)",
-					strokeColor : "rgba(48, 164, 255, 1)",
-					pointColor : "rgba(48, 164, 255, 1)",
-					pointStrokeColor : "#fff",
-					pointHighlightFill : "#fff",
-					pointHighlightStroke : "rgba(48, 164, 255, 1)",
-					data : [
-						{% for humi in value[get_sensor] %}
-							"{{humi[1]}}",
-						{% endfor %}
-					]
-			}, {
-					label: "My Second dataset",
-					fillColor : "rgba(100, 50, 200, 0.2)",
-					strokeColor : "rgba(100, 50, 200, 1)",
-					pointColor : "rgba(100, 50, 200, 1)",
-					pointStrokeColor : "#fff",
-					pointHighlightFill : "#fff",
-					pointHighlightStroke : "rgba(48, 164, 255, 1)",
-					data : [
-						{% for press in value[get_sensor] %}
-							"{{press[2]}}",
-						{% endfor %}
-					]
-			}]}, {
-			responsive: true,
-			scaleLineColor: "rgba(0,0,0,.2)",
-			scaleGridLineColor: "rgba(0,0,0,.05)",
-			scaleFontColor: "#c5c7cc"
-		});
+			}
+		{% endfor %}
+
+		return obj;
+	};
+
+	$(document).on('click', '.panel-heading #get_json', function(e){
+	  exportToJsonFile(GetValue($(this).attr("name")), $(this).attr("name"));
+	});
+
+	$(document).on('click', '.panel-heading #get_csv', function(e){
+		exportToCsvFile(GetValue($(this).attr("name")), $(this).attr("name"));
+	});
+
+	$("#datetimepicker1").datetimepicker({
+		format: 'yyyy-mm-dd hh:ii:ss',
+		defaultDate: '{{from_date}}'
+	});
+
+	$("#datetimepicker2").datetimepicker({
+		format: 'yyyy-mm-dd hh:ii:ss',
+		defaultDate: '{{to_date}}'
+	});
+
+	window.onload = function () {
+		{% for get_sensor in list %}
+			new Chart(document.getElementById("{{get_sensor}}"), {
+			  type: 'line',
+			  data: {
+			    labels: [
+						{% for time in value[get_sensor] %}
+							"{{time[3]}}",
+					  {% endfor %}
+					],
+			    datasets: [{
+			        data: [
+								{% for temp in value[get_sensor] %}
+										"{{temp[0]}}",
+								{% endfor %}
+							],
+			        label: "Temperature",
+			        borderColor: "#3e95cd",
+			        fill: false
+			      }, {
+			        data: [
+								{% for humi in value[get_sensor] %}
+									"{{humi[1]}}",
+								{% endfor %}
+							],
+			        label: "Humidity",
+			        borderColor: "#8e5ea2",
+			        fill: false
+			      }, {
+			        data: [
+								{% for press in value[get_sensor] %}
+									"{{press[2]}}",
+								{% endfor %}
+							],
+			        label: "Pressure",
+			        borderColor: "#3cba9f",
+			        fill: false
+			      }]
+			  },
+			  options: {
+					tooltips: {
+						mode: 'index',
+						position: 'nearest'
+					},
+					legend: {
+						position: 'top'
+					}
+			  }
+			});
 		{% endfor %}
 	};
-	</script>	
+	</script>
 </body>
 </html>
