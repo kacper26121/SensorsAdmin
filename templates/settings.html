@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Lumino UI Elements</title>
+	<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/static/css/font-awesome.min.css" rel="stylesheet">
+	<link href="/static/css/styles.css" rel="stylesheet">
+
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+	<!--[if lt IE 9]>
+	<script src="js/html5shiv.js"></script>
+	<script src="js/respond.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+	<nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#sidebar-collapse"><span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span></button>
+				<a class="navbar-brand" href="#"><span>Sensors</span>Admin</a>
+			</div>
+		</div><!-- /.container-fluid -->
+	</nav>
+	<div id="sidebar-collapse" class="col-sm-3 col-lg-2 sidebar">
+		<div class="profile-sidebar">
+			<div class="profile-userpic">
+				<img src="http://placehold.it/50/30a5ff/fff" class="img-responsive" alt="">
+			</div>
+			<div class="profile-usertitle">
+				<div class="profile-usertitle-name">Username</div>
+				<div class="profile-usertitle-status"><span class="indicator label-success"></span>Online</div>
+			</div>
+			<div class="clear"></div>
+		</div>
+		<ul class="nav menu">
+			<li><a href="/"><em class="fa fa-tachometer-alt">&nbsp;</em> Dashboard</a></li>
+			<li><a href="/charts"><em class="fa fa-chart-bar">&nbsp;</em> Charts</a></li>
+			{% if session['logged_in'] == "Admin"%}
+			<li class="active"><a href="/settings"><em class="fa fa-clone">&nbsp;</em> Settings</a></li>
+			{% endif %}
+			<li><a href="/logout"><em class="fa fa-power-off">&nbsp;</em> Logout</a></li>
+		</ul>
+	</div><!--/.sidebar-->
+
+	<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
+		<div class="row">
+			<ol class="breadcrumb">
+				<li><a href="#">
+					<em class="fa fa-home"></em>
+				</a></li>
+				<li class="active">Forms</li>
+			</ol>
+		</div><!--/.row-->
+
+		<div class="row">
+			<div class="col-lg-12">
+				<h1 class="page-header">Settings</h1>
+			</div>
+		</div><!--/.row-->
+
+		<div class="row">
+
+			<!-- Modal -->
+			  <div class="modal fade" id="myModal" role="dialog">
+			    <div class="modal-dialog">
+
+			      <!-- Modal content-->
+			      <div class="modal-content">
+			        <div class="modal-header">
+			          <button type="button" class="close" data-dismiss="modal">&times;</button>
+			          <h4 class="modal-title">Information</h4>
+			        </div>
+			        <div class="modal-body">
+			          <p>The data has been saved correctly.</p>
+			        </div>
+			        <div class="modal-footer">
+			          <button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>
+			        </div>
+			      </div>
+
+			    </div>
+			  </div>
+
+
+			<div class="col-md-12">
+				<div class="panel panel-default">
+					<div class="panel-body tabs">
+						<ul class="nav nav-tabs">
+							<li class="active"><a href="#tab1" data-toggle="tab">WiFi</a></li>
+							<li><a href="#tab2" data-toggle="tab">Mqtt</a></li>
+							<li><a href="#tab3" data-toggle="tab">Sensor Pairing</a></li>
+						</ul>
+						<div class="tab-content">
+							<div class="tab-pane fade in active" id="tab1">
+								<div class="row">
+									<div class="col-md-4">
+										<form role="form" method="GET">
+											<div class="form-group">
+												<label>SSID</label>
+												<input name="ssid" class="form-control" id="ssid" placeholder="">
+											</div>
+											<div class="form-group">
+												<label>Password</label>
+												<input name="password_ssid" type="password" id="password_ssid" class="form-control">
+											</div>
+											<div class="form-group">
+												<button id="SaveWiFiBtn" type="button" style="width:100%" class="btn btn-md btn-primary">Save</button>
+											</div>
+										</form>
+									</div><!--/.col-->
+									<div class="col-md-4">
+										<ul id="myList">
+										</ul>
+									</div>
+								</div><!--/.row-->
+								<div class="row">
+									<div class="col-md-2">
+										<button id="ScanWiFiBtn" type="button" style="width:100%" class="btn btn-md btn-primary">Scan</button>
+									</div><!--/.col-->
+									<div class="col-md-2">
+										<button id="CheckConnectWiFiBtn" type="button" style="width:100%" class="btn btn-md btn-primary">Check Connect</button>
+									</div><!--/.col-->
+								</div><!--/.row-->
+							</div>
+							<!-- Mqtt settings -->
+							<div class="tab-pane fade" id="tab2">
+								<div class="row">
+									<div class="col-md-4">
+										<form role="form">
+											<div class="form-group">
+												<label>Serwer</label>
+												<input class="form-control" id="serwer" placeholder="">
+											</div>
+											<div class="form-group">
+												<label>Port</label>
+												<input class="form-control" id="port" placeholder="">
+											</div>
+											<div class="form-group">
+												<label>User</label>
+												<input class="form-control" id="user_mqtt" placeholder="">
+											</div>
+											<div class="form-group">
+												<label>Password</label>
+												<input type="password" id="password_mqtt" class="form-control">
+											</div>
+											<div class="form-group">
+												<button id="SaveMqttBtn" type="button" style="width:100%" class="btn btn-md btn-primary">Save</button>
+											</div>
+										</form>
+									</div><!--/.col-->
+								</div><!--/.row-->
+								<div class="row">
+									<div class="col-md-4">
+										<button id="ConnectMqttBtn" type="button" style="width:100%" class="btn btn-md btn-primary">Connect</button>
+									</div><!--/.col-->
+								</div><!--/.row-->
+							</div>
+							<!-- Sensor Pairing -->
+							<div class="tab-pane fade" id="tab3">
+								<div class="row">
+									<div class="col-md-2">
+										<table class="table table-striped">
+										  <thead>
+										    <tr>
+										      <th scope="col">#</th>
+										      <th scope="col">Sensor</th>
+										    </tr>
+										  </thead>
+										  <tbody>
+												{% for sensor in list %}
+													<tr>
+											      <th scope="row">{{ loop.index }}</th>
+											      <td>{{sensor}}</td>
+														<td><button type="button" class="btn btn-md btn-danger">Remove</button></td>
+											    </tr>
+												{% endfor %}
+										  </tbody>
+										</table>
+									</div>
+								</div>
+								<div class="row">
+								 <div class="col-md-2">
+									 <button type="button" style="width:100%" class="btn btn-md btn-primary">Add new</button>
+								 </div><!--/.col-->
+							 </div><!--/.row-->
+							</div>
+					</div>
+				</div>
+				</div><!--/.panel-->
+			</div><!--/.col-->
+		</div><!-- /.row -->
+
+		<div class="row">
+			<div class="col-md-12">
+				<div id="PleaseWait" class="panel panel-default" hidden>
+					<div id="PleasWaitText" class="panel-heading">
+						Please Wait...
+					</div>
+					<div class="panel-body">
+						<div class="progress" style="margin-left: 20px; margin-right: 20px; height: 20px;" id="ProgressBar">
+							<div id="dynamic" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%; background-color:#f0ad4e;">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div><!--/.main-->
+
+<script src="/static/js/jquery-1.11.1.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/custom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+
+<script>
+var items_wifi = [];
+var tab_wifi = [];
+var active_wifi = null;
+var ssid_counter = 0;
+var timeout_generate_list;
+var settings = JSON.parse('{{ settings | tojson | safe}}');
+
+function remove_all_elements_wifi_list() {
+	for(var i=0; i < items_wifi.length; i++) {
+		items_wifi[i].parentNode.removeChild(items_wifi[i]);
+	}
+
+	if(items_wifi.length!=0){
+		console.log(items_wifi);
+		items_wifi.splice(0, items_wifi.length);
+		console.log(items_wifi);
+	}
+}
+
+function update_ssid_list(list, i) {
+	var node = document.createElement("LI");
+	var textnode = document.createTextNode(list[i].essid);
+	node.appendChild(textnode);
+	document.getElementById("myList").appendChild(node);
+	node.onclick = function() {
+		console.log(this.innerHTML);
+		$("#ssid").val(this.innerHTML);
+		$("#password_ssid").val("");
+		if(active_wifi != null) {
+			active_wifi.setAttribute("style", "color: black;");
+		}
+		node.setAttribute("style", "color: red;");
+		active_wifi = node;
+	}
+	items_wifi.push(node);
+	ssid_counter = ssid_counter-1;
+	if(ssid_counter>=0){
+		timeout_generate_list = setTimeout(update_ssid_list, 500, list, ssid_counter);
+	}
+}
+
+$(document).ready(function(){
+		var info = "Please Wait...";
+		var request = {cmd:null,
+									 data:null};
+
+		const CMD = {GET_WIFI_LIST : 0x01,
+								 CHECK_WIFI_CONNECT : 0x02,
+							   SAVE : 0x03,
+							 	 CONNECT_MQTT : 0x04};
+
+		const SAVE_VALUE = {WIFI_DATA : 0x01,
+												MQTT_DATA : 0x02};
+
+    // start up the SocketIO connection to the server - the namespace 'test' is also included here if necessary
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+    // this is a callback that triggers when the "my response" event is emitted by the server.
+    socket.on('response', function(msg) {
+				switch (msg.cmd) {
+  				case CMD.GET_WIFI_LIST:
+					ssid_counter = msg.data.length-1;
+    				// for(var i=0; i<msg.data.length; i++) {
+							timeout_generate_list = setTimeout(update_ssid_list, 1000, msg.data, ssid_counter);
+						// }
+    			break;
+
+					case CMD.CHECK_WIFI_CONNECT:
+					var color = "#5cb85c";
+					info = "Success!!!";
+
+					if(!msg.data) {
+						color = "#d9534f";
+						info = "Error!!!";
+					}
+
+					setTimeout(function(){
+						$("#dynamic")
+							 .css("width", 100 + "%")
+							 .css("background-color", color)
+							 .attr("aria-valuenow", 100)
+							 .text(100 + "%");
+						$("#PleasWaitText").text(info).css("color",color);
+					},500);
+					break;
+
+					case CMD.SAVE:
+						if(!msg.data.status){
+								$("#myModal").modal();
+						}
+					break
+  				default:
+				}
+    });
+
+
+		$("#ScanWiFiBtn").click(function(){
+				$("#PleaseWait").hide();
+				clearTimeout(timeout_generate_list);
+				remove_all_elements_wifi_list();
+				request.cmd = CMD.GET_WIFI_LIST;
+				request.data = null;
+
+				socket.emit('request', request);
+		});
+
+		$("#SaveWiFiBtn").click(function(){
+				request.cmd = CMD.SAVE;
+				request.data = {type:SAVE_VALUE.WIFI_DATA, ssid:$("#ssid").val(), password:$("#password_ssid").val()};
+
+				socket.emit('request', request);
+		});
+
+		$("#SaveMqttBtn").click(function(){
+				request.cmd = CMD.SAVE;
+				request.data = {type:SAVE_VALUE.MQTT_DATA, serwer:$("#serwer").val(), port:$("#port").val(), user:$("#user_mqtt").val(), password:$("#password_mqtt").val()};
+
+				socket.emit('request', request);
+		});
+
+		$("#ConnectMqttBtn").click(function(){
+				request.cmd = CMD.CONNECT_MQTT;
+				request.data = {connect:1, serwer:$("#serwer").val(), port:$("#port").val(), user:$("#user_mqtt").val(), password:$("#password_mqtt").val()};
+
+				socket.emit('request', request);
+		});
+
+		$("#CheckConnectWiFiBtn").click(function(){
+				request.cmd = CMD.CHECK_WIFI_CONNECT;
+				request.data = {ssid:$("#ssid").val(), password:$("#password_ssid").val()};
+
+				socket.emit('request', request);
+				$("#PleaseWait").hide();
+				$("#PleaseWait").show();
+				info = "Please Wait...";
+				$("#PleasWaitText").text(info).css("color","black");
+			  $("#dynamic")
+			     .css("width", 50 + "%")
+					 .css("background-color", "#f0ad4e")
+			     .attr("aria-valuenow", 50)
+			     .text(50 + "%");
+		});
+});
+
+$("#ssid").val(settings.ssid);
+$("#password_ssid").val(settings.password_ssid);
+$("#serwer").val(settings.serwer);
+$("#port").val(settings.port);
+$("#user_mqtt").val(settings.user_mqtt);
+$("#password_mqtt").val(settings.password_mqtt);
+</script>
+
+</body>
+</html>
