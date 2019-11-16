@@ -68,14 +68,15 @@
 		<div class="row">
 			{% for sensor in list %}
 			<div class="col-xs-12 col-md-6 col-lg-3">
-				<div id="{{sensor[0]}}" class="panel panel-default sensor">
+				<div style ="background-color:{{sensor[5]}}" id="{{sensor[0]}}" class="panel panel-default sensor">
 					<div class="panel-body easypiechart-panel">
-						<h3>{{sensor[0]}}</h3>
+						<h3 style="color: black; font-weight:bold">{{sensor[0]}}</h3>
 					</div>
 					<div style="margin-top:25px; margin-left:25px; padding-bottom:20px;">
-						<p style="font-size:18px;"><em class="fa fa-temperature-high">&nbsp;</em>Temperature: {{sensor[1]}}&degC</p>
-						<p style="font-size:18px;"><em class="fa fa-tint">&nbsp;</em>Humidity: {{sensor[2]}}%</p>
-						<p style="font-size:18px;"><em class="fa fa-cloud">&nbsp;</em>Pressure: {{sensor[3]}}hPa</p>
+						<p style="font-size:18px;color: black;"><em class="fa fa-temperature-high">&nbsp;</em>Temperature: {{sensor[1]}}&degC</p>
+						<p style="font-size:18px;color: black;"><em class="fa fa-tint">&nbsp;</em>Humidity: {{sensor[2]}}%</p>
+						<p style="font-size:18px;color: black;"><em class="fa fa-cloud">&nbsp;</em>Pressure: {{sensor[3]}}hPa</p>
+						<p style="font-size:18px;color: black;"><em class="fa fa-smile">&nbsp;</em>PMV: {{sensor[4]}}</p>
 					</div>
 					<form id="submit_{{sensor[0]}}" action="/charts" method="GET">
 						<input type="hidden" name="select" value="{{sensor[0]}}">
