@@ -14,13 +14,14 @@ def sensor_create_table():
 	conn.close()
 
 #Funkcja sprawdzajaca czy podany sensor jest w bazie danych.
-def sensor_check(sensor_id): 
+def sensor_check(sensor_id):
 	conn = sqlite3.connect('mqtt.db')
 	c = conn.cursor()
 	c.execute('SELECT * FROM sensor_id WHERE sensor_id = (?)', [sensor_id])
 	data = c.fetchall()
 	c.close()
 	conn.close()
+	print(data)
 	return not data
 
 
@@ -46,17 +47,19 @@ def sensor_get():
 	c.close()
 	conn.close()
 	return sensor_list
-	
+
 
 #Dodanie nowego wpisu z pomiarami do bazy danych tylko wtedy, gdy sensor jest w bazie danych.
-def sensor_data_entry(sensor_id, temp_value, hum_value, press_value): 
+def sensor_data_entry(sensor_id, temp_value, hum_value, press_value):
+	print("afafa")
+	print(sensor_id)
 	wartosc = sensor_check(sensor_id)
 	if not wartosc:
 		conn = sqlite3.connect('mqtt.db')
 		c = conn.cursor()
 		czas_wpisu = int(time.time())
 		data_wpisu = datetime.datetime.fromtimestamp(czas_wpisu).strftime('%Y-%m-%d %H:%M:%S')
-		c.execute("INSERT INTO sensor_data (sensor_id, temp_value, hum_value, press_value, ts) VALUES (?, ?, ?, ?, ?)", 
+		c.execute("INSERT INTO sensor_data (sensor_id, temp_value, hum_value, press_value, ts) VALUES (?, ?, ?, ?, ?)",
 		(sensor_id, temp_value, hum_value, press_value, data_wpisu))
 		conn.commit()
 		c.close()
@@ -88,7 +91,7 @@ def sensor_data_get(sensor_id, date_begin, date_end):
 	c.close()
 	conn.close()
 	return sensor_data_date_list
-	
+
 def last_record(sensor_id):
 	conn = sqlite3.connect('mqtt.db')
 	c = conn.cursor()
@@ -103,7 +106,7 @@ def last_record(sensor_id):
 	c.close()
 	conn.close()
 	return last_record
-		
+
 #---------------------------------------------------------
 #Tworzenie kolumn w bazie danych (jesli nie sa stworzone).
 #sensor_create_table()
@@ -133,4 +136,3 @@ def last_record(sensor_id):
 #sensor_data_entry('sensor_0000', '33', '21', '1023')
 #sensor_data_entry('sensor_0000', '45', '78', '997')
 #---------------------------------------------------------
-
