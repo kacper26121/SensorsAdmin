@@ -33,7 +33,7 @@
 				<img src="http://placehold.it/50/30a5ff/fff" class="img-responsive" alt="">
 			</div>
 			<div class="profile-usertitle">
-				<div class="profile-usertitle-name">Username</div>
+				<div class="profile-usertitle-name">{{session['logged_in']}}</div>
 				<div class="profile-usertitle-status"><span class="indicator label-success"></span>Online</div>
 			</div>
 			<div class="clear"></div>
@@ -149,9 +149,6 @@
 												<label>Password</label>
 												<input type="password" id="password_mqtt" class="form-control">
 											</div>
-											<div class="form-group">
-												<button id="SaveMqttBtn" type="button" style="width:100%" class="btn btn-md btn-primary">Save</button>
-											</div>
 										</form>
 									</div><!--/.col-->
 								</div><!--/.row-->
@@ -186,7 +183,7 @@
 								</div>
 								<div class="row">
 								 <div class="col-md-2">
-									 <button type="button" style="width:100%" class="btn btn-md btn-primary">Add new</button>
+									 <button id="AddBtn" type="button" style="width:100%" class="btn btn-md btn-primary">Add new</button>
 								 </div><!--/.col-->
 							 </div><!--/.row-->
 							</div>
@@ -268,7 +265,8 @@ $(document).ready(function(){
 		const CMD = {GET_WIFI_LIST : 0x01,
 								 CHECK_WIFI_CONNECT : 0x02,
 							   SAVE : 0x03,
-							 	 CONNECT_MQTT : 0x04};
+							 	 CONNECT_MQTT : 0x04,
+							   START_PAIRING : 0x05};
 
 		const SAVE_VALUE = {WIFI_DATA : 0x01,
 												MQTT_DATA : 0x02};
@@ -331,16 +329,16 @@ $(document).ready(function(){
 				socket.emit('request', request);
 		});
 
-		$("#SaveMqttBtn").click(function(){
-				request.cmd = CMD.SAVE;
-				request.data = {type:SAVE_VALUE.MQTT_DATA, serwer:$("#serwer").val(), port:$("#port").val(), user:$("#user_mqtt").val(), password:$("#password_mqtt").val()};
+		$("#ConnectMqttBtn").click(function(){
+				request.cmd = CMD.CONNECT_MQTT;
+				request.data = {serwer:$("#serwer").val(), port:$("#port").val(), user:$("#user_mqtt").val(), password:$("#password_mqtt").val()};
 
 				socket.emit('request', request);
 		});
 
-		$("#ConnectMqttBtn").click(function(){
-				request.cmd = CMD.CONNECT_MQTT;
-				request.data = {connect:1, serwer:$("#serwer").val(), port:$("#port").val(), user:$("#user_mqtt").val(), password:$("#password_mqtt").val()};
+		$("#AddBtn").click(function(){
+				request.cmd = CMD.START_PAIRING;
+				request.data = {dasdasfsa:"sfsaf"};
 
 				socket.emit('request', request);
 		});

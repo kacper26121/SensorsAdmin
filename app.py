@@ -10,6 +10,7 @@ import iwlist
 from subprocess import check_output
 from flask_socketio import SocketIO, send, emit
 import threading
+from subscribe_mqtt import MqttServer, mqtt
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -19,6 +20,7 @@ class CMD:
     CHECK_WIFI_CONNECT = 0x02
     SAVE = 0x03
     CONNECT_MQTT = 0x04
+    START_PAIRING = 0x05
 
 class SAVE_VALUE:
     WIFI_DATA = 0x01
@@ -44,9 +46,25 @@ class WiFiThread(threading.Thread):
         self.CheckConnect()
 
 
+def connect(client, userdata, flags, rc):
+    print("Server: " + mqtt.connack_string(rc))
+
+def message(client, obj, msg):
+    print("Otrzymana wiadomosc: " + "\nTopic: " + msg.topic + "\nWiadomosc: "+ str(msg.payload))
+    message = str(msg.payload, 'utf-8')
+    rs = message.split(" ")
+
+    if msg.topic == 'sensor/+':
+        db.sensor_data_entry(rs[0], rs[1], rs[2], rs[3])
+
+def subscribe(client, obj, mid, granted_qos):
+    print("Subskrypcja z oczekiwaniem na topic: " + topic)
+
+#mqtt_sensor = MqttServer("m24.cloudmqtt.com", 15966, "wnztitmo", "0qytqhgzfa9A", message, connect, subscribe)
+
 @socketio.on('request')
 def reguest(value):
-    print(json)
+    print(value)
     response = {"cmd" : None, "data" : None}
 
     if(value["cmd"]==CMD.GET_WIFI_LIST):
@@ -64,8 +82,20 @@ def reguest(value):
         response["cmd"] = CMD.CONNECT_MQTT
         response["data"] = 1
 
-        # if(value["data"]["connect"]):
+        print("reconnect")
+        mqtt_sensor.ChangeDataToConnect(value["data"]["serwer"], int(value["data"]["port"]), value["data"]["user"], value["data"]["password"])
+        mqtt_sensor.Reconnect()
+        if not mqtt_sensor.is_alive():
+            mqtt_sensor.start()
 
+        with open("data.json","r+") as json_file:
+            data = json.load(json_file)
+            data["serwer"] = value["data"]["serwer"]
+            data["port"] = value["data"]["port"]
+            data["user_mqtt"] = value["data"]["user"]
+            data["password_mqtt"] = value["data"]["password"]
+            json_file.seek(0)
+            json.dump(data, json_file)
 
         emit('response', response)
     elif(value["cmd"]==CMD.SAVE):
@@ -80,26 +110,14 @@ def reguest(value):
                 data["password_ssid"] = value["data"]["password"]
                 json_file.seek(0)
                 json.dump(data, json_file)
-                json_file.close()
                 response["data"]["status"] = 0
 
             emit('response', response)
-        elif(value["data"]["type"]==SAVE_VALUE.MQTT_DATA):
-            response["data"] = {"type":SAVE_VALUE.MQTT_DATA, "status":1}
-
-            with open("data.json","r+") as json_file:
-                data = json.load(json_file)
-                data["serwer"] = value["data"]["serwer"]
-                data["port"] = value["data"]["port"]
-                data["user_mqtt"] = value["data"]["user"]
-                data["password_mqtt"] = value["data"]["password"]
-                json_file.seek(0)
-                json.dump(data, json_file)
-                json_file.close()
-                response["data"]["status"] = 0
-
-            emit('response', response)
-
+    elif(value["cmd"]==CMD.START_PAIRING):
+        with open("data.json","r") as json_file:
+            data = json.load(json_file)
+        print("Pairnig")
+        wifi.wifi_request("/paired?ssid={}&password_ssid={}".format(data["ssid"],data["password_ssid"]))
 
 @app.route('/')
 def home():
